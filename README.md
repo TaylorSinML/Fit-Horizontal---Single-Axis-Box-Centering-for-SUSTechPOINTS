@@ -36,7 +36,7 @@ When annotating 3D LiDAR data, the standard **Fit Position** moves the box along
 
 2. **Point collection** — All LiDAR points inside the expanded box are gathered, then their coordinates are recalculated relative to the **original** box center and rotation.
 
-3. **Ground filtering** — The lowest Z-coordinate among all collected points is found. Every point within **1.0 m** above that minimum is discarded. This removes road/ground points that would otherwise skew the horizontal centering. If all points are filtered out, the filter is bypassed (fallback).
+3. **Ground filtering** — The lowest Z-coordinate among all collected points is found. Every point within **0.5 m** above that minimum is discarded. This removes road/ground points that would otherwise skew the horizontal centering. If all points are filtered out, the filter is bypassed (fallback).
 
 4. **Centering** — From the remaining points, the min and max values along the target axis are found. The box is translated so its center sits at `(min + max) / 2` on that axis. No other axes are touched.
 
@@ -56,11 +56,11 @@ When annotating 3D LiDAR data, the standard **Fit Position** moves the box along
 |-----------|-------|----------|---------|
 | X/Y expansion | `1.3x` | `box_op.js` | Search area beyond box edges |
 | Z expansion | `1.0x` | `box_op.js` | No vertical expansion |
-| Ground filter | `1.0 m` | `box_op.js` | Height from lowest point to cut |
+| Ground filter | `0.5 m` | `box_op.js` | Height from lowest point to cut |
 
 **Adjusting expansion:** Lower values (e.g., `1.1x`) reduce noise from nearby objects but require the box to already be close to the target. Higher values (e.g., `1.5x`) reach further but may capture irrelevant points.
 
-**Adjusting ground filter:** For trucks or tall vehicles, `1.0 m` works well. For smaller objects (pedestrians, cyclists), consider reducing to `0.3-0.5 m`.
+**Adjusting ground filter:** For trucks or tall vehicles, `0.5 m` works well. For smaller objects (pedestrians, cyclists), consider reducing to `0.3-0.5 m`.
 
 ---
 
@@ -108,7 +108,7 @@ index.html                 — UI: button with SVG icon
         for (let i = 0; i < points.length; i++){
             if (points[i][2] < minZ) minZ = points[i][2];
         }
-        let filtered = points.filter(function(p){ return p[2] - 1.0 > minZ; });
+        let filtered = points.filter(function(p){ return p[2] - 0.5 > minZ; });
         if (filtered.length === 0) filtered = points; // fallback if all filtered out
 
         // 4. Find min/max along target axis
@@ -267,7 +267,7 @@ function on_x_fit_horizontal(){
 | Box size | Changed (auto_shrink_box resizes) | Unchanged |
 | Rotation | Can change (auto_rotate_xyz) | Unchanged |
 | Search expansion | 2x X, 2x Y, 3x Z | 1.3x X, 1.3x Y, 1x Z |
-| Ground filter | 0.2 m (via get_dimension_of_points) | 1.0 m (custom filter) |
+| Ground filter | 0.2 m (via get_dimension_of_points) | 0.5 m (custom filter) |
 | Centering method | Stick nearest face to lidar side | Midpoint (min+max)/2 |
 | Lidar orientation | Yes — determines which face to stick | No — purely geometric |
 
@@ -276,3 +276,4 @@ function on_x_fit_horizontal(){
 ## License
 
 This feature is an extension of [SUSTechPOINTS](https://github.com/naurril/SUSTechPOINTS), licensed under the same terms as the original project.
+
