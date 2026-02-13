@@ -1,4 +1,4 @@
-# Fit Horizontal Single-Axis Box Centering for SUSTechPOINTS
+# Fit Horizontal - for SUSTechPOINTS
 
 > A new annotation tool that horizontally centers a 3D bounding box on the point cloud without affecting vertical position, box size, or rotation.
 
